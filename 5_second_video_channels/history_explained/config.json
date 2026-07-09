@@ -1,0 +1,18 @@
+{
+  "channel_name": "History Unfolded",
+  "channel_handle": "@HistoryUnfolded13",
+  "use_reddit": false,
+  "default_pexels_query": "mercedes safety truck semi braking road test",
+  "show_visual_card": true,
+  "theme": {
+    "font_name": "Inter",
+    "font_url": "https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap",
+    "yellow_color": "#ffeb3b",
+    "red_color": "#ff1744"
+  },
+  "logo_filename": "channelupper1.png",
+  "forced_script": {
+    "yt_search_query": "mercedes safety truck semi braking road test",
+    "text_block": "A 20-ton semi truck <red>just outbraked your car.</red> Mercedes engineers <yellow>made it stop from 93 mph in seconds</yellow> — no swerve, no skid, no drama. <red>Sensors react faster than any driver could.</red> Picture your car's brakes doing that at highway speed, <yellow>fully loaded, without losing control.</yellow> That's the future rolling toward <red>every road on Earth.</red>"
+  }
+}

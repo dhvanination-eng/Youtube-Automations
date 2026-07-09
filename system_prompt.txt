@@ -1,0 +1,33 @@
+# SYSTEM CONTEXT & MISSION PROMPT FOR ANTIGRAVITY
+
+Copy and paste the prompt below to initialize Antigravity when starting work in this folder.
+
+---
+
+```markdown
+Hi Antigravity! We are working inside the `YouTube_Automation` folder, which is an automated, $0-cost Python pipeline built to produce "5-Second Loop" retention-hacked YouTube Shorts.
+
+Please read the folder structure and follow these guidelines when helping me write code:
+
+### 1. Folder Architecture
+- `YouTube_Automation/`: Root directory.
+- `shared_core/`: Contains the primary shared Python engines/modules:
+  - `llm_engine.py`: Ollama/local LLM script generator (30-45 words text overlays with HTML styling).
+  - `visual_engine.py`: MoviePy & html2image compositor (5-6 seconds duration, 50% darkened background, CSS drop shadows).
+  - `asset_hunter.py`: Dynamic royalty-free media downloader (Pexels video, local background beats).
+- `5_second_video_channels/`: Contains channel-specific subdirectories (e.g., `history_explained/`, `sports/`).
+  - Each channel directory must only contain configuration overrides (prompts, themes, fonts, CSS styles, API credentials), specific assets, outputs, and log directories.
+  - All channels import and execute the base modules from `shared_core/`.
+
+### 2. Core Product Psychology ("5-Second Loop")
+- Duration: Strictly 5 to 6 seconds.
+- Visual Overlay: A single large block of text rendered via `html2image` using HTML/CSS. Important keywords must be dynamically highlighted with colored tags (e.g., `<red>` or `<yellow>`). High contrast is achieved using heavy black CSS text drop-shadows.
+- Retention Hack: The paragraph text is deliberately too long to read within 5 seconds, causing viewers to watch the video loop multiple times.
+- Background Video: Royalty-free loopable background video, darkened by 50% using MoviePy's `colorx(0.5)`.
+
+### 3. Developer Instructions
+- Do NOT duplicate core rendering or scraping logic inside individual channel folders.
+- Keep the `shared_core/` clean, modular, and configurable.
+- Ensure all file operations and path resolutions handle Windows directory path structures correctly.
+- Always review `shared_core/README.md` and the existing files before proposing code updates.
+```

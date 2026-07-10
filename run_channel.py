@@ -261,11 +261,13 @@ def main():
                     tags = meta_config.get("tags", ["shorts", channel_name])
                     category_id = meta_config.get("categoryId", "22")
                     
-                    # Construct clean title from config/script
-                    title = f"{config.get('channel_name', 'Short')} fact"
-                    if "forced_script" in config:
-                        # Grab the first query keyword or a short preview
-                        title = f"{config.get('channel_name')} - {config['forced_script'].get('yt_search_query', 'Fact')}"
+                    # Generate a clean, simple, human-understandable title
+                    from shared_core.title_generator import generate_video_title
+                    title = generate_video_title(
+                        script_text=script_data["text_block"],
+                        yt_search_query=script_data.get("yt_search_query"),
+                        fallback_title=script_data.get("title")
+                    )
                     
                     video_id = distributor.upload_video(
                         video_path=str(final_output_path),

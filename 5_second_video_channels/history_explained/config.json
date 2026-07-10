@@ -14,15 +14,18 @@
   "fallback_facts": [
     {
       "yt_search_query": "roman coliseum ancient rome drone",
-      "text_block": "The ancient Romans used to clean and whiten their teeth using <yellow>human urine</yellow>. It was so valuable that they even established a <red>urine tax</red> on the public collections."
+      "text_block": "The ancient Romans used to clean and whiten their teeth using <yellow>human urine</yellow>. It was so valuable that they even established a <red>urine tax</red> on the public collections.",
+      "title": "Ancient Roman Urine Tax"
     },
     {
       "yt_search_query": "voyager spacecraft deep space cosmos",
-      "text_block": "The computers on the <yellow>Voyager 1 spacecraft</yellow> possess only sixty-nine kilobytes of memory. That is hundreds of thousands of times less capacity than a <red>standard car key fob</red> today."
+      "text_block": "The computers on the <yellow>Voyager 1 spacecraft</yellow> possess only sixty-nine kilobytes of memory. That is hundreds of thousands of times less capacity than a <red>standard car key fob</red> today.",
+      "title": "Voyager 1's Small Memory"
     },
     {
       "yt_search_query": "oxford university old library historical building",
-      "text_block": "Oxford University is actually older than the <yellow>Aztec Empire</yellow>. The school began teaching in ten ninety-six, whereas the Aztec civilization was founded in <red>fourteen twenty-eight</red>."
+      "text_block": "Oxford University is actually older than the <yellow>Aztec Empire</yellow>. The school began teaching in ten ninety-six, whereas the Aztec civilization was founded in <red>fourteen twenty-eight</red>.",
+      "title": "Oxford's Ancient History"
     }
   ]
 }

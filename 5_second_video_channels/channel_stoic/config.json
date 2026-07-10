@@ -13,15 +13,18 @@
   "fallback_facts": [
     {
       "yt_search_query": "greek philosopher statue head close up",
-      "text_block": "Control your thoughts, <yellow>or they will control you.</yellow> Focus only on what is in your power, and <red>let go of the rest.</red>"
+      "text_block": "Control your thoughts, <yellow>or they will control you.</yellow> Focus only on what is in your power, and <red>let go of the rest.</red>",
+      "title": "Master Your Thoughts"
     },
     {
       "yt_search_query": "ocean waves crashing on rocks sunset storm",
-      "text_block": "The obstacle is the way. Every challenge is an opportunity to <yellow>practice self-control</yellow> and build <red>mental toughness.</red>"
+      "text_block": "The obstacle is the way. Every challenge is an opportunity to <yellow>practice self-control</yellow> and build <red>mental toughness.</red>",
+      "title": "The Obstacle Is The Way"
     },
     {
       "yt_search_query": "starry night sky cosmos telescope zoom",
-      "text_block": "You have power over your mind, <yellow>not outside events.</yellow> Realize this, and you will find <red>immense strength.</red>"
+      "text_block": "You have power over your mind, <yellow>not outside events.</yellow> Realize this, and you will find <red>immense strength.</red>",
+      "title": "Power Over Your Mind"
     }
   ]
 }

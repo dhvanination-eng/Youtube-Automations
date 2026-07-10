@@ -1,0 +1,25 @@
+{
+  "channel_name": "Survival Nature",
+  "theme": {
+    "background_color": "#020703",
+    "text_color": "#ffffff",
+    "highlight_color": "#22c55e"
+  },
+  "youtube_metadata": {
+    "tags": ["survival facts", "wild nature", "animal adaptations", "deep ocean", "wilderness survival"],
+    "description": "Terrifying nature facts, extreme animal adaptations, and wilderness survival trivia. #shorts #nature",
+    "categoryId": "15"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "deep sea angler fish black background teeth glow",
+      "text_block": "In the pitch-black deep ocean, the female anglerfish attracts prey using a <yellow>glowing bioluminescent lure</yellow> attached to her head. Males are tiny parasites that permanently fuse <red>to the female's body.</red>",
+      "title": "Anglerfish Mating"
+    },
+    {
+      "yt_search_query": "desert cactus heat sun dry sand dunes",
+      "text_block": "If you are lost in the desert, do not drink liquid from a cactus. Most cactus species contain <yellow>toxic alkaloids</yellow> that will cause vomiting, accelerating <red>lethal dehydration.</red>",
+      "title": "Desert Cactus Myth"
+    }
+  ]
+}

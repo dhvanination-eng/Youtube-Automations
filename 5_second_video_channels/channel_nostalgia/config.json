@@ -1,0 +1,25 @@
+{
+  "channel_name": "Retro Tech Nostalgia",
+  "theme": {
+    "background_color": "#080b11",
+    "text_color": "#ffffff",
+    "highlight_color": "#ec4899"
+  },
+  "youtube_metadata": {
+    "tags": ["retro tech", "nostalgia", "computing history", "gaming secrets", "old software"],
+    "description": "Obscure computing history, retro console hacks, and tech relics from the 80s, 90s, and 2000s. #shorts #retrotech",
+    "categoryId": "28"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "floppy disk drive 3.5 disk reader old computer",
+      "text_block": "The standard save icon in modern software is a three-and-a-half-inch <yellow>floppy disk</yellow> which held only one point four four megabytes. A single average photo today would require <red>three floppies</red> to store.",
+      "title": "The Save Icon"
+    },
+    {
+      "yt_search_query": "nintendo game boy screen pixel gameplay pocket",
+      "text_block": "The original Game Boy possessed only <yellow>eight kilobytes</yellow> of RAM. Despite this, programmers created legendary, complex, and full-length titles that fit into <red>tiny game cartridges.</red>",
+      "title": "Game Boy RAM Limits"
+    }
+  ]
+}

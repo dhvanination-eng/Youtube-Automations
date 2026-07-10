@@ -47,6 +47,29 @@ def count_words(text):
     """Counts the words in a text after removing tags."""
     return len(clean_html_tags(text).split())
 
+def parse_json_robustly(text):
+    """Clean and parse JSON from API response, resolving common formatting issues."""
+    text = text.strip()
+    # Remove markdown code block formatting
+    if text.startswith("```"):
+        match = re.match(r"^```(?:json)?\s*(.*?)\s*```$", text, re.DOTALL)
+        if match:
+            text = match.group(1).strip()
+            
+    try:
+        return json.loads(text)
+    except Exception as e:
+        # Extract JSON content between first '{' and last '}'
+        start = text.find('{')
+        end = text.rfind('}')
+        if start != -1 and end != -1:
+            try:
+                return json.loads(text[start:end+1])
+            except Exception:
+                pass
+        raise e
+
+
 def fetch_reddit_til():
     """
     Fetches the top trending titles from Reddit's r/todayilearned.
@@ -78,8 +101,6 @@ def generate_script_via_gemini(system_prompt, seed_concept=None):
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is not configured.")
         
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-    
     prompt = system_prompt
     if seed_concept:
         prompt += f"\n\nHere is a raw historical seed fact you must adapt into the retention-hacked format: {seed_concept}"
@@ -95,12 +116,25 @@ def generate_script_via_gemini(system_prompt, seed_concept=None):
         }
     }
     
-    response = requests.post(url, json=payload, timeout=15)
-    response.raise_for_status()
-    result = response.json()
-    
-    text_content = result["candidates"][0]["content"]["parts"][0]["text"].strip()
-    return json.loads(text_content)
+    last_error = None
+    # Try gemini-3.5-flash first (validated for current key), fallback to newer/older models
+    for model in ["gemini-3.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+        try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+            response = requests.post(url, json=payload, timeout=30)
+
+            response.raise_for_status()
+            result = response.json()
+            text_content = result["candidates"][0]["content"]["parts"][0]["text"].strip()
+            return parse_json_robustly(text_content)
+        except Exception as e:
+            last_error = e
+            print(f"[LLM Engine] Failed to generate script using {model}: {e}")
+            continue
+            
+    if last_error:
+        raise last_error
+
 
 def generate_script_via_ollama(system_prompt, seed_concept=None):
     """Calls the local Ollama API to generate the JSON script."""
@@ -124,7 +158,7 @@ def generate_script_via_ollama(system_prompt, seed_concept=None):
     result = response.json()
     
     text_content = result["response"].strip()
-    return json.loads(text_content)
+    return parse_json_robustly(text_content)
 
 def generate_history_script(system_prompt=None, use_reddit=False, fallback_facts=None):
     """
@@ -187,6 +221,80 @@ def validate_script(script):
         return False
         
     return True
+
+def generate_batch_via_gemini(system_prompt, existing_facts, count=100):
+    """
+    Generates a batch of unique history scripts using Gemini, preventing duplicate concepts.
+    """
+    if not GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY is not configured.")
+
+    generated_scripts = []
+    chunk_size = 25
+    remaining = count
+
+    while remaining > 0:
+        current_request_count = min(chunk_size, remaining)
+        print(f"[LLM Engine] Requesting chunk of {current_request_count} scripts from Gemini (remaining: {remaining - current_request_count})...")
+        
+        # Combine system prompt with exclusion context
+        exclusion_text = ""
+        all_existing = existing_facts + [s.get("text_block", "") for s in generated_scripts]
+        if all_existing:
+            # Show only the last 150 facts to keep context clean but informative
+            recent_facts = all_existing[-150:]
+            exclusion_text = "\n\nCRITICAL: DO NOT generate facts about any of the following topics or reuse these concepts:\n"
+            for fact in recent_facts:
+                exclusion_text += f"- {fact[:120]}\n"
+        
+        prompt = system_prompt + exclusion_text
+        prompt += f"\n\nGenerate exactly {current_request_count} unique, mind-bending historical fact scripts following the instructions above."
+        prompt += "\nReturn a valid JSON array of objects, where each object has exactly the keys 'yt_search_query' and 'text_block'."
+
+        payload = {
+            "contents": [{
+                "parts": [{"text": prompt}]
+            }],
+            "generationConfig": {
+                "responseMimeType": "application/json"
+            }
+        }
+
+        success = False
+        last_error = None
+        # Try gemini-3.5-flash first, fallback
+        for model in ["gemini-3.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+                response = requests.post(url, json=payload, timeout=60)
+                response.raise_for_status()
+                result = response.json()
+                text_content = result["candidates"][0]["content"]["parts"][0]["text"].strip()
+                scripts_chunk = parse_json_robustly(text_content)
+                if isinstance(scripts_chunk, list):
+                    generated_scripts.extend(scripts_chunk)
+                    remaining -= len(scripts_chunk)
+                    success = True
+                    break
+                elif isinstance(scripts_chunk, dict) and "scripts" in scripts_chunk:
+                    s_list = scripts_chunk["scripts"]
+                    if isinstance(s_list, list):
+                        generated_scripts.extend(s_list)
+                        remaining -= len(s_list)
+                        success = True
+                        break
+            except Exception as e:
+                last_error = e
+                print(f"[LLM Engine] Failed chunk generation using {model}: {e}")
+                continue
+                
+        if not success:
+            print(f"[LLM Engine] Failed to get valid chunk from Gemini. Stopping batch generation.")
+            if last_error:
+                raise last_error
+            break
+            
+    return generated_scripts
 
 if __name__ == "__main__":
     # Test execution

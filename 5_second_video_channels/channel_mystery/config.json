@@ -1,0 +1,25 @@
+{
+  "channel_name": "Midnight Mystery Files",
+  "theme": {
+    "background_color": "#0a0303",
+    "text_color": "#ffffff",
+    "highlight_color": "#dc2626"
+  },
+  "youtube_metadata": {
+    "tags": ["mystery", "true crime", "unsolved mysteries", "crime facts", "bizarre cases"],
+    "description": "Unexplained historical cold cases, shocking forensic mysteries, and crime files. #shorts #unsolved",
+    "categoryId": "22"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "foggy street dark alley lantern old london",
+      "text_block": "In eighteen eighty-eight, Jack the Ripper terrorized London, leaving five victims and <red>dozens of letters.</red> Forensic investigators still debate if the letters were written by the killer or <yellow>sensationalist reporters.</yellow>",
+      "title": "The Ripper Letters"
+    },
+    {
+      "yt_search_query": "forensic science laboratory microscope DNA slide",
+      "text_block": "Identical twins share the exact same DNA, but they <yellow>do not share fingerprints.</yellow> Fingerprints are formed by physical pressure in the womb, making them <red>100% unique to each human.</red>",
+      "title": "Twin Fingerprints"
+    }
+  ]
+}

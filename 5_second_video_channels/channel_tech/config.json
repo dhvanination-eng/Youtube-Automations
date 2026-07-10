@@ -1,0 +1,31 @@
+{
+  "channel_name": "Tech Explained",
+  "theme": {
+    "background_color": "#000000",
+    "text_color": "#ffffff",
+    "yellow_color": "#00e5ff",
+    "red_color": "#ff1744"
+  },
+  "youtube_metadata": {
+    "tags": ["tech", "technology", "programming", "computers", "trivia", "gadgets"],
+    "description": "Mind-blowing tech facts, programming stories, and future tech trends. #shorts #tech",
+    "categoryId": "28"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "google search engine logo glowing screen",
+      "text_block": "In twenty-fifteen, a former Google employee managed to buy the domain <yellow>Google.com for just twelve dollars</yellow> because of a registry glitch. He owned it for exactly <red>one minute.</red>",
+      "title": "Google Bought For $12"
+    },
+    {
+      "yt_search_query": "supercomputer server room flashing led lights",
+      "text_block": "The ENIAC, completed in <yellow>nineteen forty-five</yellow>, was the first programmable electronic computer. It weighed over <red>twenty-seven tons</red> and took up an entire basement room.",
+      "title": "The 27-Ton Computer"
+    },
+    {
+      "yt_search_query": "voyager spacecraft deep space cosmos",
+      "text_block": "The computers on the <yellow>Voyager 1 spacecraft</yellow> possess only sixty-nine kilobytes of memory. That is hundreds of thousands of times less capacity than a <red>standard car key fob</red> today.",
+      "title": "Voyager 1's Small Memory"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "channel_name": "Wealth Mentality",
+  "theme": {
+    "background_color": "#020804",
+    "text_color": "#ffffff",
+    "highlight_color": "#fbbf24"
+  },
+  "youtube_metadata": {
+    "tags": ["finance", "billionaire mindset", "investing", "money rules", "wealth habits"],
+    "description": "Financial psychology secrets, money rules, and billionaire mental models to master wealth. #shorts #wealth",
+    "categoryId": "22"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "wealthy businessman writing check pen close up",
+      "text_block": "Billionaires do not trade time for money. They build systems, write code, or invest capital to make money <yellow>while they sleep.</yellow> Real wealth is owning assets that <red>work for you 24/7.</red>",
+      "title": "Assets Over Time"
+    },
+    {
+      "yt_search_query": "stack of old gold bars vault bank vault",
+      "text_block": "Compounding interest is the eighth wonder of the world. Investing just <yellow>five dollars a day</yellow> starting at age twenty can grow to over <red>one million dollars</red> by retirement.",
+      "title": "The Power of Compounding"
+    }
+  ]
+}

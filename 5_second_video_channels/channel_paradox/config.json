@@ -1,0 +1,25 @@
+{
+  "channel_name": "Paradox Science",
+  "theme": {
+    "background_color": "#05020c",
+    "text_color": "#ffffff",
+    "highlight_color": "#a855f7"
+  },
+  "youtube_metadata": {
+    "tags": ["science", "paradox", "psychology", "mysteries", "mindblown"],
+    "description": "Mind-bending scientific paradoxes and psychological illusions designed to question reality. #shorts #paradox",
+    "categoryId": "27"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "universe time dilation clock speed tick",
+      "text_block": "If you travel at the <yellow>speed of light</yellow>, time stops completely. To a photon, the moment it was created and the moment it hits your eye happen <red>at the exact same instant.</red>",
+      "title": "Time Does Not Exist"
+    },
+    {
+      "yt_search_query": "schrodinger cat quantum experiment box",
+      "text_block": "According to quantum mechanics, a particle can exist in <yellow>multiple places at once.</yellow> It only decides where to be when someone <red>actively looks at it.</red>",
+      "title": "Quantum Reality Check"
+    }
+  ]
+}

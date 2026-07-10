@@ -2,6 +2,9 @@
 *client_secret*.json
 *clientsecret*.json
 token.json
+api_keys.json
+shared_core/api_keys.json
+
 
 # Ignore temporary rendering files
 temp/

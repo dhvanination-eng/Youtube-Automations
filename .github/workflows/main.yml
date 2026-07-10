@@ -36,6 +36,8 @@ jobs:
         HISTORY_EXPLAINED_TOKEN: ${{ secrets.HISTORY_EXPLAINED_TOKEN }}
         STOIC_CLIENT_SECRET: ${{ secrets.STOIC_CLIENT_SECRET }}
         STOIC_TOKEN: ${{ secrets.STOIC_TOKEN }}
+        TECH_CLIENT_SECRET: ${{ secrets.TECH_CLIENT_SECRET }}
+        TECH_TOKEN: ${{ secrets.TECH_TOKEN }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
       run: |
@@ -54,6 +56,14 @@ jobs:
         if [ -n "$STOIC_TOKEN" ]; then
           echo "$STOIC_TOKEN" > 5_second_video_channels/channel_stoic/token.json
         fi
+
+        # Inject Tech keys if secrets are configured
+        if [ -n "$TECH_CLIENT_SECRET" ]; then
+          echo "$TECH_CLIENT_SECRET" > 5_second_video_channels/channel_tech/client_secret.json
+        fi
+        if [ -n "$TECH_TOKEN" ]; then
+          echo "$TECH_TOKEN" > 5_second_video_channels/channel_tech/token.json
+        fi
         
         # Inject central API keys
         echo "{\"GEMINI_API_KEY\": \"$GEMINI_API_KEY\", \"PEXELS_API_KEY\": \"$PEXELS_API_KEY\"}" > shared_core/api_keys.json
@@ -66,3 +76,7 @@ jobs:
     - name: Run Stoic Pipeline
       run: |
         python run_channel.py channel_stoic --upload
+
+    - name: Run Tech Pipeline
+      run: |
+        python run_channel.py channel_tech --upload

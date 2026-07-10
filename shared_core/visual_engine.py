@@ -146,18 +146,31 @@ def loop_audio_clip(clip, duration):
     """
     Safely loops an audio clip to the target duration under both MoviePy 1.x and 2.x.
     """
+    # Try MoviePy 2.x with_effects system
+    if hasattr(clip, "with_effects"):
+        try:
+            if hasattr(afx, "AudioLoop"):
+                return clip.with_effects([afx.AudioLoop(duration=duration)])
+            elif hasattr(vfx, "Loop"):
+                return clip.with_effects([vfx.Loop(duration=duration)])
+        except Exception:
+            pass
+
+    # Try MoviePy 1.x / older style clip.fx
+    try:
+        if hasattr(afx, "audio_loop"):
+            return clip.fx(afx.audio_loop, duration=duration)
+        elif hasattr(vfx, "loop"):
+            return clip.fx(vfx.loop, duration=duration)
+    except Exception:
+        pass
+
+    # Fallbacks
     try:
         return clip.looped(duration=duration)
     except Exception:
-        try:
-            import moviepy.audio.fx.all as afx_all
-            return clip.fx(afx_all.audio_loop, duration=duration)
-        except Exception:
-            try:
-                import moviepy.video.fx.all as vfx_all
-                return clip.fx(vfx_all.loop, duration=duration)
-            except Exception:
-                return clip
+        return clip
+
 
 from shared_core.config import DARKEN_FACTOR
 

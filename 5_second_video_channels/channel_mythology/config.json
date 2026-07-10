@@ -1,0 +1,25 @@
+{
+  "channel_name": "Forgotten Mythology",
+  "theme": {
+    "background_color": "#0a0702",
+    "text_color": "#ffffff",
+    "highlight_color": "#d97706"
+  },
+  "youtube_metadata": {
+    "tags": ["mythology", "ancient gods", "norse myths", "greek mythology", "legendary creatures"],
+    "description": "Forgotten tales, dark folklore, Norse, Greek, and Egyptian mythological rules. #shorts #mythology",
+    "categoryId": "22"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "greek god zeus lightning strike sky",
+      "text_block": "In ancient Greek myth, Zeus did not create his own signature <yellow>lightning bolts.</yellow> They were forged for him by the Cyclopes as a gift of gratitude for <red>freeing them from Tartarus.</red>",
+      "title": "Zeus Lightning Forge"
+    },
+    {
+      "yt_search_query": "norse mythology thor hammer mjolnir metal",
+      "text_block": "Thor's hammer, Mjolnir, was forged by dwarves but has a <yellow>defectively short handle.</yellow> The mischievous god Loki shape-shifted into a fly and bit the blacksmith's eye, <red>ruining the final blow.</red>",
+      "title": "Mjolnir Handle Defect"
+    }
+  ]
+}

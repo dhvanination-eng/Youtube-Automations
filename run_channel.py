@@ -129,11 +129,32 @@ def main():
     dashboard.set_status(0, "+")
     dashboard.set_status(1, ">")
 
-    # 3. Generate script via LLM or use forced override
+    # 3. Resolve script via pool, LLM, or forced override
+    pool_path = channel_dir / "script_pool.json"
+    script_data = None
+    pool_updated = False
+
     if "forced_script" in config:
         print("[Run Pipeline] Using FORCED script override from configuration...")
         script_data = config["forced_script"]
-    else:
+    elif pool_path.exists():
+        try:
+            with open(pool_path, "r") as pf:
+                pool = json.load(pf)
+            if pool:
+                script_data = pool.pop(0)
+                pool_updated = True
+                print(f"[Run Pipeline] Popped script from local script pool (remaining in pool: {len(pool)})")
+                with open(pool_path, "w") as pf:
+                    json.dump(pool, pf, indent=2)
+            else:
+                print("[Run Pipeline] Warning: local script pool is empty!")
+        except Exception as e:
+            print(f"[Run Pipeline Warning] Failed to read script pool: {e}")
+
+    if not script_data:
+        print("[Run Pipeline] Fetching script via live LLM engines (fallback path)...")
+        print("[Run Pipeline] Hint: Run 'python batch_generate.py <channel_name>' to populate the script pool.")
         script_data = generate_history_script(
             system_prompt=system_prompt,
             use_reddit=config.get("use_reddit", True),
@@ -283,6 +304,18 @@ def main():
             with open(history_path, "w") as hf:
                 json.dump(history_list, hf, indent=2)
             print(f"[Run Pipeline] Cumulative running log updated: {history_path}")
+
+            # If pool was updated or history changed, commit and push to git
+            files_to_sync = [str(history_path.resolve())]
+            if pool_updated:
+                files_to_sync.append(str(pool_path.resolve()))
+                
+            from batch_generate import git_commit_and_push
+            git_commit_and_push(
+                file_paths=files_to_sync,
+                commit_message=f"update(history): run pipeline for {channel_name} - generated video {output_filename}"
+            )
+
 
     except Exception as e:
         print(f"\n[Error] Pipeline execution failed: {e}")

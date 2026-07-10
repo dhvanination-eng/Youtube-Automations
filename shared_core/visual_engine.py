@@ -159,8 +159,9 @@ def create_video_composite(
     - Compact text centered in middle.
     - Rounded visual card centered in lower half, y=1000.
     """
-    print("[Visual Engine] Compositing assets onto solid background...")
-    duration = TARGET_DURATION
+    import random
+    duration = round(random.uniform(6.0, 7.0), 2)
+    print(f"[Visual Engine] Compositing assets onto solid background (Randomized Duration: {duration}s)...")
     
     bg_clip = None
     if bg_video_path and os.path.exists(bg_video_path):

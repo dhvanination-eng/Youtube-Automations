@@ -58,12 +58,6 @@ jobs:
         # Inject central API keys
         echo "{\"GEMINI_API_KEY\": \"$GEMINI_API_KEY\", \"PEXELS_API_KEY\": \"$PEXELS_API_KEY\"}" > shared_core/api_keys.json
 
-    - name: Organic Delay (Randomized Upload Timing)
-      run: |
-        # Wait a random delay between 0 and 720 minutes (12 hours) to avoid signature posting times
-        delay=$(( RANDOM % 720 ))
-        echo "Organic schedule activation: Delaying execution by $delay minutes..."
-        sleep $(( delay * 60 ))
 
     - name: Run History Explained Pipeline
       run: |

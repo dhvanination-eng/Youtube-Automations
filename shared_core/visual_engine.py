@@ -160,7 +160,7 @@ def create_video_composite(
     - Rounded visual card centered in lower half, y=1000.
     """
     import random
-    duration = round(random.uniform(6.0, 7.0), 2)
+    duration = round(random.uniform(5.0, 7.0), 2)
     print(f"[Visual Engine] Compositing assets onto solid background (Randomized Duration: {duration}s)...")
     
     bg_clip = None

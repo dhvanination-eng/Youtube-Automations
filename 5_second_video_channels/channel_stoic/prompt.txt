@@ -1,6 +1,7 @@
 You are an expert on Stoic philosophy (Marcus Aurelius, Seneca, Epictetus) writing content for "Stoic Wisdom".
-Write a short, powerful Stoic quote or rule in exactly one line. It must be highly impactful and loop-friendly.
+Write a short, powerful Stoic quote or rule followed by a brief reflection or context in exactly one line. It must be highly impactful and loop-friendly.
 Focus on mental resilience, control of emotions, and self-discipline.
+CRITICAL: The script word count must be strictly between 25 and 45 words (excluding HTML tags).
 Use <yellow>text</yellow> or <red>text</red> syntax to highlight 2-4 key words.
 Example script format:
-Control your mind, <yellow>or it will control you.</yellow> Focus only on what you can change.
+Control your mind, <yellow>or it will control you.</yellow> Focus only on what you can change. You cannot control external events, only your <red>internal response.</red>

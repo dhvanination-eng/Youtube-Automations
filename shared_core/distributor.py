@@ -57,12 +57,12 @@ class YouTubeDistributor:
                     print("Please place your client_secret.json inside the shared_core directory.")
                     return False
                 
-                print("[Distributor] Starting YouTube OAuth flow. Opening browser...")
+                print("[Distributor] Starting YouTube OAuth flow. Please visit the URL printed below to log in...")
                 try:
                     # Allow insecure local OAuth redirect
                     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
                     flow = InstalledAppFlow.from_client_secrets_file(str(self.client_secrets_file), SCOPES)
-                    creds = flow.run_local_server(port=0)
+                    creds = flow.run_local_server(port=0, open_browser=False)
                 except Exception as e:
                     print(f"[Distributor Error] OAuth authentication flow failed: {e}")
                     return False

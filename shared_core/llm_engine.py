@@ -117,8 +117,8 @@ def generate_script_via_gemini(system_prompt, seed_concept=None):
     }
     
     last_error = None
-    # Try gemini-3.5-flash first (validated for current key), fallback to newer/older models
-    for model in ["gemini-3.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+    # Try gemini-3-flash-preview first (has strong caching), fallback to newer/older models
+    for model in ["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
         try:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
             response = requests.post(url, json=payload, timeout=30)
@@ -262,8 +262,8 @@ def generate_batch_via_gemini(system_prompt, existing_facts, count=100):
 
         success = False
         last_error = None
-        # Try gemini-3.5-flash first, fallback
-        for model in ["gemini-3.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
+        # Try gemini-3-flash-preview first (has strong caching), fallback to newer/older models
+        for model in ["gemini-3-flash-preview", "gemini-3.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
                 response = requests.post(url, json=payload, timeout=60)

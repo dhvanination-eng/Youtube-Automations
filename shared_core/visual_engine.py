@@ -142,32 +142,85 @@ def render_text_overlay(text, output_path, theme_config=None):
     print(f"[Visual Engine] Text overlay saved to {output_path}")
     return True
 
+from shared_core.config import DARKEN_FACTOR
+
 def create_video_composite(
     text_overlay_path,
     visual_card_path,
     output_video_path,
+    bg_video_path=None,
     logo_path=None,
     music_path=None
 ):
     """
-    Composites the vertical Short on a solid black background canvas:
+    Composites the vertical Short:
+    - Background Video (if provided, scaled/cropped/darkened) or Black Canvas.
     - Logo (if exists) scaled to full width at y=0.
     - Compact text centered in middle.
     - Rounded visual card centered in lower half, y=1000.
     """
-    print("[Visual Engine] Compositing assets onto solid black background...")
+    print("[Visual Engine] Compositing assets onto solid background...")
     duration = TARGET_DURATION
     
-    # 1. Create a temporary black canvas image using PIL to serve as the background clip
-    black_bg_temp = Path(output_video_path).parent / "temp_pitch_black.png"
-    black_img = Image.new("RGB", (VIDEO_WIDTH, VIDEO_HEIGHT), (0, 0, 0))
-    black_img.save(black_bg_temp)
-    
-    try:
-        bg_clip = ImageClip(str(black_bg_temp)).with_duration(duration)
-    except AttributeError:
-        bg_clip = ImageClip(str(black_bg_temp)).set_duration(duration)
+    bg_clip = None
+    if bg_video_path and os.path.exists(bg_video_path):
+        try:
+            print(f"[Visual Engine] Loading background video: {bg_video_path}")
+            # Load and mute background video
+            raw_bg = VideoFileClip(bg_video_path).without_audio()
+            
+            # Loop/subclip background video to match duration
+            if raw_bg.duration < duration:
+                # If too short, loop it
+                raw_bg = raw_bg.loop(duration=duration)
+            else:
+                raw_bg = raw_bg.subclip(0, duration)
+                
+            # Resize and crop to vertical 1080x1920
+            # Scale video so it fills the 1080x1920 canvas
+            w, h = raw_bg.size
+            scale_factor = max(VIDEO_WIDTH / w, VIDEO_HEIGHT / h)
+            new_w, new_h = int(w * scale_factor), int(h * scale_factor)
+            
+            try:
+                resized_bg = raw_bg.resized(new_size=(new_w, new_h))
+            except AttributeError:
+                resized_bg = raw_bg.resize(newsize=(new_w, new_h))
+                
+            # Center crop to 1080x1920
+            x1 = (new_w - VIDEO_WIDTH) // 2
+            y1 = (new_h - VIDEO_HEIGHT) // 2
+            
+            try:
+                bg_clip = resized_bg.cropped(x1=x1, y1=y1, width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
+            except AttributeError:
+                bg_clip = resized_bg.crop(x1=x1, y1=y1, width=VIDEO_WIDTH, height=VIDEO_HEIGHT)
+                
+            # Darken the background video so text stands out
+            try:
+                bg_clip = bg_clip.with_effects([vfx.MultiplyColor(DARKEN_FACTOR)])
+            except (AttributeError, NameError):
+                try:
+                    bg_clip = bg_clip.fx(vfx.multiply_color, DARKEN_FACTOR)
+                except Exception:
+                    # Fallback fl_image filter
+                    bg_clip = bg_clip.fl_image(lambda img: (img * DARKEN_FACTOR).astype('uint8'))
+                    
+        except Exception as e:
+            print(f"[Visual Engine Warning] Failed to process background video: {e}. Falling back to black background...")
+            bg_clip = None
+
+    if bg_clip is None:
+        # Create a temporary black canvas image using PIL to serve as the background clip
+        black_bg_temp = Path(output_video_path).parent / "temp_pitch_black.png"
+        black_img = Image.new("RGB", (VIDEO_WIDTH, VIDEO_HEIGHT), (0, 0, 0))
+        black_img.save(black_bg_temp)
         
+        try:
+            bg_clip = ImageClip(str(black_bg_temp)).with_duration(duration)
+        except AttributeError:
+            bg_clip = ImageClip(str(black_bg_temp)).set_duration(duration)
+            
     clips = [bg_clip]
     
     # Track positions dynamically depending on whether a logo exists

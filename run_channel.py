@@ -12,10 +12,52 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from shared_core.llm_engine import generate_history_script
-from shared_core.asset_hunter import generate_history_visual, fetch_local_music
+from shared_core.asset_hunter import generate_history_visual, fetch_local_music, search_pexels_video
 from shared_core.visual_engine import process_visual_card, render_text_overlay, create_video_composite
 from shared_core.distributor import YouTubeDistributor
 from shared_core.config import SHARED_CORE_DIR
+
+class TerminalDashboard:
+    def __init__(self, channel_name, handles_upload=False):
+        self.channel_name = channel_name
+        self.steps = [
+            "Load Configurations & Setup",
+            "Generate Video Script (LLM / Fallback)",
+            "Sourcing AI Visual Card (Pollinations AI)",
+            "Sourcing Background Video (Pexels / Local)",
+            "Rendering HTML/CSS transparent text overlay",
+            "Selecting background music beats (AI/Rules Selector)",
+            "Compositing and rendering video (MoviePy)",
+        ]
+        if handles_upload:
+            self.steps.append("Uploading video to YouTube Studio (Data API)")
+            
+        self.status = [" "] * len(self.steps) # " ", "▶", "✓", "✗"
+        
+    def set_status(self, step_idx, status_symbol):
+        if 0 <= step_idx < len(self.steps):
+            self.status[step_idx] = status_symbol
+            self.draw()
+            
+    def draw(self):
+        # Clear screen
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("======================================================")
+        print("                 YOUTUBE SHORTS PIPELINE              ")
+        print(f"             Channel: {self.channel_name}             ")
+        print("======================================================")
+        for i, (step, stat) in enumerate(zip(self.steps, self.status)):
+            symbol = f"[{stat}]"
+            # Add color symbols
+            if stat == "✓":
+                symbol = "[\033[92m✓\033[0m]" # green
+            elif stat == "▶":
+                symbol = "[\033[93m▶\033[0m]" # yellow
+            elif stat == "✗":
+                symbol = "[\033[91m✗\033[0m]" # red
+                
+            print(f" {symbol} {i+1}. {step}")
+        print("======================================================\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Run YouTube Shorts Generation Pipeline for a specific channel")
@@ -79,20 +121,27 @@ def main():
     else:
         print("[Run Pipeline] No custom prompt.txt found. Using default system prompt.")
 
+    # 2. Initialize Dashboard
+    dashboard = TerminalDashboard(
+        channel_name=config.get("channel_name", channel_name),
+        handles_upload=args.upload
+    )
+    dashboard.set_status(0, "✓")
+    dashboard.set_status(1, "▶")
+
     # 3. Generate script via LLM or use forced override
     if "forced_script" in config:
         print("[Run Pipeline] Using FORCED script override from configuration...")
         script_data = config["forced_script"]
     else:
-        use_reddit = config.get("use_reddit", True)
-        fallback_facts = config.get("fallback_facts", None)
         script_data = generate_history_script(
-            system_prompt=system_prompt, 
-            use_reddit=use_reddit,
-            fallback_facts=fallback_facts
+            system_prompt=system_prompt,
+            use_reddit=config.get("use_reddit", True),
+            fallback_facts=config.get("fallback_facts")
         )
 
     text_block = script_data.get("text_block")
+    dashboard.set_status(1, "✓")
 
     print("\n----------------------------------------------------")
     print(f"Generated Script Text:\n{text_block}")
@@ -102,6 +151,7 @@ def main():
     temp_visual_path = temp_dir / "temp_visual_raw.jpg"
     temp_processed_visual_path_local = temp_dir / "temp_visual_card.png"
     temp_text_overlay_path = temp_dir / "temp_text_overlay.png"
+    temp_bg_video_path = temp_dir / "temp_bg_video.mp4"
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_filename = f"short_{timestamp}.mp4"
@@ -109,6 +159,7 @@ def main():
 
     try:
         # 5. Fetch and preprocess AI visual card (only if enabled)
+        dashboard.set_status(2, "▶")
         show_visual_card = config.get("show_visual_card", True)
         temp_processed_visual_path = None
         if show_visual_card:
@@ -121,11 +172,30 @@ def main():
             if not card_success:
                 raise RuntimeError("Failed to preprocess visual card image.")
             temp_processed_visual_path = str(temp_processed_visual_path_local)
+            dashboard.set_status(2, "✓")
         else:
             print("[Run Pipeline] Step 1: AI visual card overlay is disabled in config. Skipping.")
+            dashboard.set_status(2, "-")
 
-        # 6. Render Text Overlay via html2image
-        print("[Run Pipeline] Step 2: Rendering transparent HTML/CSS text overlay...")
+        # 6. Sourcing background video
+        dashboard.set_status(3, "▶")
+        print("[Run Pipeline] Step 2: Sourcing background video...")
+        video_success = search_pexels_video(
+            query=script_data.get("yt_search_query", config.get("default_pexels_query", "aesthetic background")),
+            output_path=str(temp_bg_video_path),
+            channel_assets_dir=str(assets_dir)
+        )
+        if not video_success:
+            print("[Run Pipeline Warning] Sourcing background video failed. Proceeding with black canvas...")
+            bg_video_str = None
+            dashboard.set_status(3, "✗")
+        else:
+            bg_video_str = str(temp_bg_video_path)
+            dashboard.set_status(3, "✓")
+
+        # 7. Render Text Overlay via html2image
+        dashboard.set_status(4, "▶")
+        print("[Run Pipeline] Step 3: Rendering transparent HTML/CSS text overlay...")
         theme_config = config.get("theme", {})
         text_success = render_text_overlay(
             text_block, 
@@ -134,23 +204,32 @@ def main():
         )
         if not text_success:
             raise RuntimeError("Failed to render text HTML to image overlay.")
+        dashboard.set_status(4, "✓")
 
-        # 7. Sourcing background audio beat
-        print("[Run Pipeline] Step 3: Sourcing background audio beats...")
+        # 8. Sourcing background audio beat
+        dashboard.set_status(5, "▶")
+        print("[Run Pipeline] Step 4: Sourcing background audio beats...")
         from shared_core.music_selector import select_music_for_fact
         music_path = select_music_for_fact(script_data["text_block"])
         if not music_path:
             music_path = fetch_local_music(str(assets_dir))
+        dashboard.set_status(5, "✓")
 
-        # 8. Composite everything using MoviePy
-        print("[Run Pipeline] Step 4: Compositing and rendering video...")
+        # 9. Composite everything using MoviePy
+        dashboard.set_status(6, "▶")
+        print("[Run Pipeline] Step 5: Compositing and rendering video...")
         composite_success = create_video_composite(
             text_overlay_path=str(temp_text_overlay_path),
             visual_card_path=temp_processed_visual_path,
             output_video_path=str(final_output_path),
+            bg_video_path=bg_video_str,
             logo_path=logo_str,
             music_path=music_path
         )
+        if not composite_success:
+            dashboard.set_status(6, "✗")
+            raise RuntimeError("Compositing failed.")
+        dashboard.set_status(6, "✓")
 
         if composite_success:
             print("\n====================================================")
@@ -171,6 +250,7 @@ def main():
             # 8b. Upload to YouTube if requested
             video_id = None
             if args.upload:
+                dashboard.set_status(7, "▶")
                 print("\n[Run Pipeline] Stage 5: Authenticating and uploading to YouTube...")
                 distributor = YouTubeDistributor(secrets_dir=channel_dir)
                 if distributor.authenticate():
@@ -194,6 +274,11 @@ def main():
                         tags=tags,
                         category_id=category_id
                     )
+                    
+                if video_id:
+                    dashboard.set_status(7, "✓")
+                else:
+                    dashboard.set_status(7, "✗")
 
             log_data = {
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

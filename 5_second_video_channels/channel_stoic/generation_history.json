@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "timestamp": "2026-07-10 19:18:22",
+    "script": {
+      "yt_search_query": "voyager spacecraft deep space",
+      "text_block": "The computers on the <yellow>Voyager 1 spacecraft</yellow> possess only sixty-nine kilobytes of memory. That is hundreds of thousands of times less capacity than a <red>standard car key fob</red> today."
+    },
+    "music_used": "space_futuristic.mp3",
+    "output_video": "C:\\Users\\arinc\\OneDrive\\Documents\\antigravity\\Youtube.automation.agent\\YouTube_Automation\\5_second_video_channels\\channel_stoic\\output\\short_20260710_191705.mp4",
+    "youtube_video_id": null
+  }
+]

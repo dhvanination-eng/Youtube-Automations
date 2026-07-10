@@ -9,5 +9,19 @@
     "tags": ["stoicism", "philosophy", "wisdom", "quotes", "motivation"],
     "description": "Daily Stoic wisdom and philosophy to build mental strength and resilience. #shorts #stoic",
     "categoryId": "22"
-  }
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "greek philosopher statue head close up",
+      "text_block": "Control your thoughts, <yellow>or they will control you.</yellow> Focus only on what is in your power, and <red>let go of the rest.</red>"
+    },
+    {
+      "yt_search_query": "ocean waves crashing on rocks sunset storm",
+      "text_block": "The obstacle is the way. Every challenge is an opportunity to <yellow>practice self-control</yellow> and build <red>mental toughness.</red>"
+    },
+    {
+      "yt_search_query": "starry night sky cosmos telescope zoom",
+      "text_block": "You have power over your mind, <yellow>not outside events.</yellow> Realize this, and you will find <red>immense strength.</red>"
+    }
+  ]
 }

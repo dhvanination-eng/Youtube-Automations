@@ -10,14 +10,32 @@ FALLBACK_BACKGROUND_URLS = [
     "https://github.com/intel-iot-devkit/sample-videos/raw/master/person-bicycle-car-detection.mp4"
 ]
 
-def search_pexels_video(query, output_path):
+def search_pexels_video(query, output_path, channel_assets_dir=None):
     """
-    Searches Pexels for a vertical video matching the query and downloads it.
-    If no key is configured or search fails, downloads a fallback video loop.
+    Searches for a background video. 
+    First checks if a local video is available in channel_assets_dir/videos/.
+    If not, queries Pexels API, and finally falls back to a remote URL download.
     """
+    import shutil
+    
     # Ensure parent directories exist
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
+    # Step 1: Check for local videos in channel assets
+    if channel_assets_dir:
+        local_videos_dir = Path(channel_assets_dir) / "videos"
+        if local_videos_dir.exists() and local_videos_dir.is_dir():
+            local_vids = [f for f in local_videos_dir.glob("*") if f.suffix.lower() in [".mp4", ".mov", ".avi"]]
+            if local_vids:
+                selected_vid = random.choice(local_vids)
+                print(f"[Asset Hunter] Sourced local background video: {selected_vid.name}")
+                try:
+                    shutil.copy(str(selected_vid), output_path)
+                    return True
+                except Exception as e:
+                    print(f"[Asset Hunter Warning] Failed to copy local video: {e}. Falling back to Pexels...")
+
+    # Step 2: Query Pexels API
     if PEXELS_API_KEY:
         try:
             print(f"[Asset Hunter] Searching Pexels for vertical videos of '{query}'...")
@@ -51,7 +69,7 @@ def search_pexels_video(query, output_path):
         except Exception as e:
             print(f"[Asset Hunter] Pexels API search failed: {e}")
             
-    # Fallback download
+    # Step 3: Fallback download
     print("[Asset Hunter] Using fallback background video loop...")
     fallback_url = random.choice(FALLBACK_BACKGROUND_URLS)
     try:

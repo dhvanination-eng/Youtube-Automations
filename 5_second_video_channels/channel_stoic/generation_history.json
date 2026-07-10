@@ -8,5 +8,16 @@
     "music_used": "space_futuristic.mp3",
     "output_video": "C:\\Users\\arinc\\OneDrive\\Documents\\antigravity\\Youtube.automation.agent\\YouTube_Automation\\5_second_video_channels\\channel_stoic\\output\\short_20260710_191705.mp4",
     "youtube_video_id": null
+  },
+  {
+    "timestamp": "2026-07-11 03:19:06",
+    "script": {
+      "yt_search_query": "greek philosopher statue head close up",
+      "text_block": "Control your thoughts, <yellow>or they will control you.</yellow> Focus only on what is in your power, and <red>let go of the rest.</red>",
+      "title": "Master Your Thoughts"
+    },
+    "music_used": "rivalry_dramatic.mp3",
+    "output_video": "C:\\Users\\arinc\\OneDrive\\Documents\\antigravity\\Youtube.automation.agent\\YouTube_Automation\\5_second_video_channels\\channel_stoic\\output\\short_20260711_031833.mp4",
+    "youtube_video_id": null
   }
 ]

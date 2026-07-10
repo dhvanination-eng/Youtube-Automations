@@ -1,0 +1,25 @@
+{
+  "channel_name": "Sports Legends",
+  "theme": {
+    "background_color": "#07080a",
+    "text_color": "#ffffff",
+    "highlight_color": "#f97316"
+  },
+  "youtube_metadata": {
+    "tags": ["sports records", "athletic feats", "sports history", "bizarre rules", "sports facts"],
+    "description": "Mind-blowing athletic records, historic sports milestones, and bizarre game rule facts. #shorts #sports",
+    "categoryId": "17"
+  },
+  "fallback_facts": [
+    {
+      "yt_search_query": "wilt chamberlain basketball jersey 100 points game",
+      "text_block": "In nineteen sixty-two, NBA legend Wilt Chamberlain scored an incredible <yellow>one hundred points</yellow> in a single game. No player in basketball history has ever <red>broken this record since.</red>",
+      "title": "Chamberlain's 100 Point Game"
+    },
+    {
+      "yt_search_query": "usain bolt 100m sprint running track world record",
+      "text_block": "Usain Bolt ran the 100-meter dash in a world record <yellow>nine point five eight seconds</yellow> in 2009. His peak speed reached over <red>twenty-seven miles per hour.</red>",
+      "title": "Bolt's World Record"
+    }
+  ]
+}

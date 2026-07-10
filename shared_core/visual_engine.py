@@ -142,6 +142,23 @@ def render_text_overlay(text, output_path, theme_config=None):
     print(f"[Visual Engine] Text overlay saved to {output_path}")
     return True
 
+def loop_audio_clip(clip, duration):
+    """
+    Safely loops an audio clip to the target duration under both MoviePy 1.x and 2.x.
+    """
+    try:
+        return clip.looped(duration=duration)
+    except Exception:
+        try:
+            import moviepy.audio.fx.all as afx_all
+            return clip.fx(afx_all.audio_loop, duration=duration)
+        except Exception:
+            try:
+                import moviepy.video.fx.all as vfx_all
+                return clip.fx(vfx_all.loop, duration=duration)
+            except Exception:
+                return clip
+
 from shared_core.config import DARKEN_FACTOR
 
 def create_video_composite(
@@ -294,10 +311,7 @@ def create_video_composite(
             
             # Loop audio if it is shorter than target duration
             if audio.duration < duration:
-                try:
-                    audio = audio.looped(duration=duration)
-                except AttributeError:
-                    audio = audio.loop(duration=duration)
+                audio = loop_audio_clip(audio, duration)
             else:
                 try:
                     audio = audio.subclipped(0, duration)

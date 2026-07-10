@@ -137,7 +137,10 @@ def main():
 
         # 7. Sourcing background audio beat
         print("[Run Pipeline] Step 3: Sourcing background audio beats...")
-        music_path = fetch_local_music(str(assets_dir))
+        from shared_core.music_selector import select_music_for_fact
+        music_path = select_music_for_fact(script_data["text_block"])
+        if not music_path:
+            music_path = fetch_local_music(str(assets_dir))
 
         # 8. Composite everything using MoviePy
         print("[Run Pipeline] Step 4: Compositing and rendering video...")

@@ -1,0 +1,74 @@
+name: YouTube Shorts Automated Pipeline
+
+on:
+  schedule:
+    # Trigger daily at 12:00 AM UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual run from GitHub UI
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Set up Chrome & FFMPEG
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg google-chrome-stable
+
+    - name: Inject Channel Secrets & Credentials
+      env:
+        HISTORY_EXPLAINED_CLIENT_SECRET: ${{ secrets.HISTORY_EXPLAINED_CLIENT_SECRET }}
+        HISTORY_EXPLAINED_TOKEN: ${{ secrets.HISTORY_EXPLAINED_TOKEN }}
+        STOIC_CLIENT_SECRET: ${{ secrets.STOIC_CLIENT_SECRET }}
+        STOIC_TOKEN: ${{ secrets.STOIC_TOKEN }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      run: |
+        # Inject History Explianed keys if secrets are configured
+        if [ -n "$HISTORY_EXPLAINED_CLIENT_SECRET" ]; then
+          echo "$HISTORY_EXPLAINED_CLIENT_SECRET" > 5_second_video_channels/history_explained/clientsecret.historyunfolded.json
+        fi
+        if [ -n "$HISTORY_EXPLAINED_TOKEN" ]; then
+          echo "$HISTORY_EXPLAINED_TOKEN" > 5_second_video_channels/history_explained/token.json
+        fi
+        
+        # Inject Stoic keys if secrets are configured
+        if [ -n "$STOIC_CLIENT_SECRET" ]; then
+          echo "$STOIC_CLIENT_SECRET" > 5_second_video_channels/channel_stoic/client_secret.json
+        fi
+        if [ -n "$STOIC_TOKEN" ]; then
+          echo "$STOIC_TOKEN" > 5_second_video_channels/channel_stoic/token.json
+        fi
+        
+        # Inject central API keys
+        echo "{\"GEMINI_API_KEY\": \"$GEMINI_API_KEY\", \"PEXELS_API_KEY\": \"$PEXELS_API_KEY\"}" > shared_core/api_keys.json
+
+    - name: Organic Delay (Randomized Upload Timing)
+      run: |
+        # Wait a random delay between 0 and 720 minutes (12 hours) to avoid signature posting times
+        delay=$(( RANDOM % 720 ))
+        echo "Organic schedule activation: Delaying execution by $delay minutes..."
+        sleep $(( delay * 60 ))
+
+    - name: Run History Explained Pipeline
+      run: |
+        python run_channel.py history_explained --upload
+
+    - name: Run Stoic Pipeline
+      run: |
+        python run_channel.py channel_stoic --upload

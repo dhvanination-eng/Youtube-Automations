@@ -49,12 +49,12 @@ class TerminalDashboard:
         for i, (step, stat) in enumerate(zip(self.steps, self.status)):
             symbol = f"[{stat}]"
             # Add color symbols
-            if stat == "✓":
-                symbol = "[\033[92m✓\033[0m]" # green
-            elif stat == "▶":
-                symbol = "[\033[93m▶\033[0m]" # yellow
-            elif stat == "✗":
-                symbol = "[\033[91m✗\033[0m]" # red
+            if stat == "+":
+                symbol = "[\033[92m+\033[0m]" # green +
+            elif stat == ">":
+                symbol = "[\033[93m>\033[0m]" # yellow >
+            elif stat == "!":
+                symbol = "[\033[91m!\033[0m]" # red !
                 
             print(f" {symbol} {i+1}. {step}")
         print("======================================================\n")
@@ -126,8 +126,8 @@ def main():
         channel_name=config.get("channel_name", channel_name),
         handles_upload=args.upload
     )
-    dashboard.set_status(0, "✓")
-    dashboard.set_status(1, "▶")
+    dashboard.set_status(0, "+")
+    dashboard.set_status(1, ">")
 
     # 3. Generate script via LLM or use forced override
     if "forced_script" in config:
@@ -141,7 +141,7 @@ def main():
         )
 
     text_block = script_data.get("text_block")
-    dashboard.set_status(1, "✓")
+    dashboard.set_status(1, "+")
 
     print("\n----------------------------------------------------")
     print(f"Generated Script Text:\n{text_block}")
@@ -159,7 +159,7 @@ def main():
 
     try:
         # 5. Fetch and preprocess AI visual card (only if enabled)
-        dashboard.set_status(2, "▶")
+        dashboard.set_status(2, ">")
         show_visual_card = config.get("show_visual_card", True)
         temp_processed_visual_path = None
         if show_visual_card:
@@ -172,29 +172,18 @@ def main():
             if not card_success:
                 raise RuntimeError("Failed to preprocess visual card image.")
             temp_processed_visual_path = str(temp_processed_visual_path_local)
-            dashboard.set_status(2, "✓")
+            dashboard.set_status(2, "+")
         else:
             print("[Run Pipeline] Step 1: AI visual card overlay is disabled in config. Skipping.")
             dashboard.set_status(2, "-")
 
-        # 6. Sourcing background video
-        dashboard.set_status(3, "▶")
-        print("[Run Pipeline] Step 2: Sourcing background video...")
-        video_success = search_pexels_video(
-            query=script_data.get("yt_search_query", config.get("default_pexels_query", "aesthetic background")),
-            output_path=str(temp_bg_video_path),
-            channel_assets_dir=str(assets_dir)
-        )
-        if not video_success:
-            print("[Run Pipeline Warning] Sourcing background video failed. Proceeding with black canvas...")
-            bg_video_str = None
-            dashboard.set_status(3, "✗")
-        else:
-            bg_video_str = str(temp_bg_video_path)
-            dashboard.set_status(3, "✓")
+        # 6. Sourcing background video (Disabled - Channel background is locked to strictly pitch black)
+        print("[Run Pipeline] Step 2: Sourcing background video is disabled (forced 100% pitch black background).")
+        bg_video_str = None
+        dashboard.set_status(3, "-")
 
         # 7. Render Text Overlay via html2image
-        dashboard.set_status(4, "▶")
+        dashboard.set_status(4, ">")
         print("[Run Pipeline] Step 3: Rendering transparent HTML/CSS text overlay...")
         theme_config = config.get("theme", {})
         text_success = render_text_overlay(
@@ -204,19 +193,19 @@ def main():
         )
         if not text_success:
             raise RuntimeError("Failed to render text HTML to image overlay.")
-        dashboard.set_status(4, "✓")
+        dashboard.set_status(4, "+")
 
         # 8. Sourcing background audio beat
-        dashboard.set_status(5, "▶")
+        dashboard.set_status(5, ">")
         print("[Run Pipeline] Step 4: Sourcing background audio beats...")
         from shared_core.music_selector import select_music_for_fact
         music_path = select_music_for_fact(script_data["text_block"])
         if not music_path:
             music_path = fetch_local_music(str(assets_dir))
-        dashboard.set_status(5, "✓")
+        dashboard.set_status(5, "+")
 
         # 9. Composite everything using MoviePy
-        dashboard.set_status(6, "▶")
+        dashboard.set_status(6, ">")
         print("[Run Pipeline] Step 5: Compositing and rendering video...")
         composite_success = create_video_composite(
             text_overlay_path=str(temp_text_overlay_path),
@@ -227,9 +216,9 @@ def main():
             music_path=music_path
         )
         if not composite_success:
-            dashboard.set_status(6, "✗")
+            dashboard.set_status(6, "!")
             raise RuntimeError("Compositing failed.")
-        dashboard.set_status(6, "✓")
+        dashboard.set_status(6, "+")
 
         if composite_success:
             print("\n====================================================")
@@ -250,7 +239,7 @@ def main():
             # 8b. Upload to YouTube if requested
             video_id = None
             if args.upload:
-                dashboard.set_status(7, "▶")
+                dashboard.set_status(7, ">")
                 print("\n[Run Pipeline] Stage 5: Authenticating and uploading to YouTube...")
                 distributor = YouTubeDistributor(secrets_dir=channel_dir)
                 if distributor.authenticate():
@@ -278,9 +267,9 @@ def main():
                     )
                     
                 if video_id:
-                    dashboard.set_status(7, "✓")
+                    dashboard.set_status(7, "+")
                 else:
-                    dashboard.set_status(7, "✗")
+                    dashboard.set_status(7, "!")
 
             log_data = {
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),

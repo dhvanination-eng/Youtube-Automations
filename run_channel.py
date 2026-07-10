@@ -185,7 +185,7 @@ def main():
         temp_processed_visual_path = None
         if show_visual_card:
             print("[Run Pipeline] Step 1: Sourcing AI image visual card...")
-            img_success = generate_history_visual(text_block, str(temp_visual_path))
+            img_success = generate_history_visual(text_block, str(temp_visual_path), image_prompt=script_data.get("image_prompt"))
             if not img_success:
                 raise RuntimeError("Failed to generate AI visual card.")
 

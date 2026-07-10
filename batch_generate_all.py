@@ -11,8 +11,10 @@ CHANNELS = [
     "channel_wealth",
     "channel_nostalgia",
     "channel_survival",
-    "channel_mythology"
+    "channel_mythology",
+    "history_explained"
 ]
+
 
 def main():
     print("==================================================")

@@ -123,18 +123,18 @@ def generate_fallback_card(output_path):
     print(f"[Asset Hunter] Saved fallback placeholder card to {output_path}")
     return True
 
-def generate_history_visual(fact_text, output_path):
+def generate_history_visual(fact_text, output_path, image_prompt=None):
     """
     Downloads an AI image explaining the fact using Pollinations.ai (free & no-key).
     We form a descriptive prompt from the fact contents and retry with timeout.
     """
-    clean_fact = fact_text.replace("<yellow>", "").replace("</yellow>", "").replace("<red>", "").replace("</red>", "")
-    
-    image_prompt = (
-        f"A striking museum display showcase of {clean_fact}. "
-        f"Aesthetic historical archaeological artifact, extreme detail, "
-        f"photorealistic museum lighting, depth of field, 4k resolution"
-    )
+    if not image_prompt:
+        clean_fact = fact_text.replace("<yellow>", "").replace("</yellow>", "").replace("<red>", "").replace("</red>", "")
+        image_prompt = (
+            f"A striking museum display showcase of {clean_fact}. "
+            f"Aesthetic historical archaeological artifact, extreme detail, "
+            f"photorealistic museum lighting, depth of field, 4k resolution"
+        )
     
     if len(image_prompt) > 400:
         image_prompt = image_prompt[:400]

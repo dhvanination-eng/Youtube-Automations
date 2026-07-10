@@ -32,11 +32,13 @@ CRITICAL RULES:
 2. Wrap exactly 2 or 3 shocking phrases or important keywords in `<red>` or `<yellow>` HTML tags (e.g. `<yellow>first moon landing</yellow>` or `<red>Great Pyramids of Giza</red>`) so our video renderer can highlight them.
 3. Provide a `yt_search_query` to find highly relevant, aesthetic royalty-free background footage (e.g., historical timelapses, drone shots, or archival footage).
 4. The script word count must be strictly between 30 and 45 words (excluding the HTML tags themselves).
+5. Provide a highly descriptive `image_prompt` for a text-free visual card illustrating the fact. The prompt must describe a photorealistic, high-detail, artistic image, and explicitly state that it must not contain any text, writing, labels, or letters.
 
 Required JSON structure:
 {
   "yt_search_query": "relevant background video search terms",
-  "text_block": "The complete fact script text with highlight tags..."
+  "text_block": "The complete fact script text with highlight tags...",
+  "image_prompt": "highly detailed image generation prompt, photorealistic, no text, no letters, artistic lighting, 4k"
 }"""
 
 def clean_html_tags(text):
@@ -204,7 +206,7 @@ def validate_script(script):
     """Validates structure and constraints of the generated JSON script."""
     if not isinstance(script, dict):
         return False
-    if "yt_search_query" not in script or "text_block" not in script:
+    if "yt_search_query" not in script or "text_block" not in script or "image_prompt" not in script:
         print(f"[LLM Engine] Validation failed: Missing keys in script {script}")
         return False
         

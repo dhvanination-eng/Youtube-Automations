@@ -40,6 +40,11 @@ def main():
         except Exception as e:
             print(f"[Batch Runner Error] Exception occurred for {channel}: {e}")
 
+        # Sleep to avoid rate limits between channel runs
+        import time
+        print("[Batch Runner] Sleeping for 15 seconds before the next channel...")
+        time.sleep(15)
+
     # After all are generated, run a single git commit and push to sync everything cleanly
     print("\n[Batch Runner] Synchronizing pool files to GitHub...")
     try:

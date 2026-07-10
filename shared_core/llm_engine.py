@@ -226,6 +226,7 @@ def generate_batch_via_gemini(system_prompt, existing_facts, count=100):
     """
     Generates a batch of unique history scripts using Gemini, preventing duplicate concepts.
     """
+    import time
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is not configured.")
 
@@ -293,6 +294,10 @@ def generate_batch_via_gemini(system_prompt, existing_facts, count=100):
             if last_error:
                 raise last_error
             break
+            
+        if remaining > 0:
+            print("[LLM Engine] Sleeping for 10 seconds to respect API rate limits...")
+            time.sleep(10)
             
     return generated_scripts
 

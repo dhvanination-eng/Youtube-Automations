@@ -267,24 +267,28 @@ def create_video_composite(
         # Track positions dynamically depending on whether a logo exists
         text_y_pos = 370  # Default higher up if no logo is present
         
-        # 2. Position Channel Logo/Banner (scaled to full width of the video at the top)
+        # 2. Position Channel Logo (scaled to a clean circular profile icon)
         if logo_path and os.path.exists(logo_path):
-            print(f"[Visual Engine] Placing channel banner logo: {logo_path}")
+            print(f"[Visual Engine] Placing channel profile logo: {logo_path}")
             try:
                 logo_clip = ImageClip(logo_path).with_duration(duration)
             except AttributeError:
                 logo_clip = ImageClip(logo_path).set_duration(duration)
                 
-            logo_clip = logo_clip.resized(width=int(VIDEO_WIDTH * 0.8))  # Scale to 80% of video width
-            
-            # Center horizontally, position at y=40
+            logo_width = int(VIDEO_WIDTH * 0.22)
             try:
-                logo_clip = logo_clip.with_position(("center", 40))
+                logo_clip = logo_clip.resized(width=logo_width)
             except AttributeError:
-                logo_clip = logo_clip.set_position(("center", 40))
+                logo_clip = logo_clip.resize(width=logo_width)
+            
+            # Center horizontally, position at y=140
+            try:
+                logo_clip = logo_clip.with_position(("center", 140))
+            except AttributeError:
+                logo_clip = logo_clip.set_position(("center", 140))
                 
             clips.append(logo_clip)
-            text_y_pos = 520  # Shift text down below the banner
+            text_y_pos = 420  # Shift text down below the profile logo
 
         # 3. Position compact Text overlay (centered vertically or shifted under logo)
         try:
@@ -299,7 +303,7 @@ def create_video_composite(
             
         clips.append(text_clip)
 
-        # 4. Position square visual card (centered in lower half, y=1000)
+        # 4. Position square visual card (centered in lower half, y=980)
         if visual_card_path and os.path.exists(visual_card_path):
             print(f"[Visual Engine] Overlaying rounded visual card: {visual_card_path}")
             try:
@@ -308,9 +312,9 @@ def create_video_composite(
                 visual_clip = ImageClip(visual_card_path).set_duration(duration)
                 
             try:
-                visual_clip = visual_clip.with_position(("center", 1000))
+                visual_clip = visual_clip.with_position(("center", 980))
             except AttributeError:
-                visual_clip = visual_clip.set_position(("center", 1000))
+                visual_clip = visual_clip.set_position(("center", 980))
                 
             clips.append(visual_clip)
 
